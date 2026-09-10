@@ -38,3 +38,8 @@ Ingeniería de Sistemas e Informática.
 ## Autor
 
 Estudiante de Ingeniería de Sistemas e Informática · UNSM · Tarapoto, Perú
+
+## Despliegue
+
+El sitio se publica automáticamente en GitHub Pages al hacer push a `main`
+(workflow `.github/workflows/deploy.yml`).
