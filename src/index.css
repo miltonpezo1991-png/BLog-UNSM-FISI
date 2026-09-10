@@ -1,18 +1,18 @@
 :root {
-  --deep: #0e3b21;
-  --green: #2c8e3f;
-  --green-dark: #1d6a2f;
-  --green-light: #e4f1e7;
-  --blue: #2f7fb5;
-  --blue-light: #e6f1fa;
-  --amber: #d97706;
-  --amber-light: #fdf3e7;
+  --deep: #123f18;
+  --green: #247e2a;
+  --green-dark: #18591e;
+  --green-light: #e5f2e6;
+  --cyan: #2e8ea8;
+  --cyan-light: #e3f3f8;
+  --magenta: #a34d84;
+  --magenta-light: #faedf5;
   --cream: #f6f7f3;
   --card: #ffffff;
   --ink: #1c2b22;
   --ink-soft: #5b6b60;
   --line: #e2e7e0;
-  --shadow: 0 3px 14px rgba(14, 59, 33, 0.07);
+  --shadow: 0 3px 14px rgba(18, 63, 24, 0.07);
   --radius: 12px;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color-scheme: light;
@@ -49,7 +49,7 @@ textarea {
 }
 
 a {
-  color: var(--blue);
+  color: var(--cyan);
 }
 
 .container {
@@ -180,7 +180,7 @@ a {
 
 /* ============ Banner ============ */
 .banner {
-  background: linear-gradient(120deg, var(--deep) 0%, var(--green-dark) 55%, #1c5f8c 100%);
+  background: linear-gradient(120deg, var(--deep) 0%, var(--green-dark) 55%, #1b6b7e 100%);
   color: #fff;
   padding: 44px 0 0;
 }
@@ -362,18 +362,18 @@ a {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--blue);
-  border: 3px solid var(--blue-light);
-  box-shadow: 0 0 0 2px var(--blue);
+  background: var(--cyan);
+  border: 3px solid var(--cyan-light);
+  box-shadow: 0 0 0 2px var(--cyan);
   display: grid;
   place-items: center;
   font-size: 0.6rem;
 }
 
 .exam-dot {
-  background: var(--amber);
+  background: var(--magenta);
   border-color: #fff;
-  box-shadow: 0 0 0 2px var(--amber);
+  box-shadow: 0 0 0 2px var(--magenta);
   width: 22px;
   height: 22px;
   font-size: 0.6rem;
@@ -410,16 +410,16 @@ a {
 .week-meta {
   font-size: 0.78rem;
   color: var(--ink-soft);
-  background: var(--blue-light);
-  color: var(--blue);
+  background: var(--cyan-light);
+  color: var(--cyan);
   padding: 2px 10px;
   border-radius: 999px;
   font-weight: 600;
 }
 
 .exam-label {
-  background: var(--amber-light);
-  color: var(--amber);
+  background: var(--magenta-light);
+  color: var(--magenta);
   font-weight: 700;
 }
 
@@ -428,8 +428,8 @@ a {
 }
 
 .exam-week .week-body {
-  background: var(--amber-light);
-  border: 1px dashed var(--amber);
+  background: var(--magenta-light);
+  border: 1px dashed var(--magenta);
   border-radius: 10px;
   padding: 12px;
 }
@@ -463,8 +463,8 @@ a {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--blue);
-  background: var(--blue-light);
+  color: var(--cyan);
+  background: var(--cyan-light);
   padding: 1px 8px;
   border-radius: 6px;
   margin-bottom: 6px;
@@ -696,7 +696,7 @@ footer .footer-logos img {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--blue);
+  color: var(--cyan);
   font-weight: 600;
 }
 
