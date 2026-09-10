@@ -16,12 +16,9 @@ export default function Hero({ stats }) {
             <p>
               <b>{AUTOR.nombre}</b>
             </p>
-            <p>
-              Ciclo {AUTOR.ciclo} · Curso: {AUTOR.curso}
-            </p>
-            <p>
-              Docente: {AUTOR.docente}
-            </p>
+            <p>Ciclo: {AUTOR.ciclo}</p>
+            <p>Curso: {AUTOR.curso}</p>
+            <p>Docente: {AUTOR.docente}</p>
             <p>Periodo académico: {AUTOR.periodo}</p>
           </div>
 

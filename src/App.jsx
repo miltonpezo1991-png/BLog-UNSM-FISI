@@ -185,7 +185,10 @@ export default function App() {
         </p>
         <p>Facultad de Ingeniería de Sistemas e Informática · Tarapoto, Perú</p>
         <p>
-          {AUTOR.nombre} · Ciclo {AUTOR.ciclo} · {AUTOR.curso} · Docente: {AUTOR.docente}
+          {AUTOR.nombre} · Ciclo {AUTOR.ciclo}
+        </p>
+        <p>
+          Curso: {AUTOR.curso} · Docente: {AUTOR.docente}
         </p>
         <p style={{ marginTop: 6, fontSize: '0.8rem', opacity: 0.75 }}>
           Proyecto académico · {AUTOR.periodo}
