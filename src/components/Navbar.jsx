@@ -11,7 +11,7 @@ export default function Navbar({ onLogin, onLogout, onPublicar }) {
         <div className="brand">
           <img src="assets/img/logo-unsm.png" alt="Logo UNSM" />
           <div className="brand-text">
-            <strong>Bitácora Académica</strong>
+            <strong>Blog de Trabajo UNSM-FISI</strong>
             <small>UNSM · FISI — Tarapoto</small>
           </div>
         </div>

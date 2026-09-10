@@ -12,6 +12,14 @@ export const EXAMENES = {
 
 export const SEMANAS_CLASE = UNIDADES.reduce((acc, u) => acc + u.semanas.length, 0)
 
+export const AUTOR = {
+  nombre: 'Jhon Antony Pezo Tuanama',
+  ciclo: 'IV',
+  curso: 'Teoría General de Sistemas',
+  docente: 'Ing. Dr. Alberto Alva Arévalo',
+  periodo: '2026-II',
+}
+
 export const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || ''
 
 export function esAdmin(email) {

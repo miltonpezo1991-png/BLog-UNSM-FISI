@@ -1,7 +1,9 @@
-# Bitácora Académica · UNSM FISI
+# Blog de Trabajo UNSM-FISI
 
-Blog académico de la Universidad Nacional de San Martín (Tarapoto, Perú) - Facultad de
-Ingeniería de Sistemas e Informática.
+Blog de trabajo de **Jhon Antony Pezo Tuanama** — Universidad Nacional de San Martín
+(Tarapoto, Perú) · Facultad de Ingeniería de Sistemas e Informática.
+
+Curso: **Teoría General de Sistemas** (IV ciclo) · Docente: **Ing. Dr. Alberto Alva Arévalo**
 
 ## Características
 

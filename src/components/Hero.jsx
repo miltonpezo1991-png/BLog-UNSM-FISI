@@ -1,21 +1,34 @@
+import { AUTOR } from '../config'
+
 export default function Hero({ stats }) {
   return (
     <section className="banner">
       <div className="container banner-grid">
         <div>
-          <span className="banner-eyebrow">Ingeniería de Sistemas e Informática</span>
+          <span className="banner-eyebrow">Facultad de Ingeniería de Sistemas e Informática</span>
           <h1>
-            Bitácora académica
+            Blog de Trabajo
             <br />
-            semestre 2026-II
+            UNSM-FISI
           </h1>
-          <p>
-            Mis trabajos de clase organizados semana a semana, ordenados por
-            unidades académicas, con un espacio para comentarios y aportes.
-          </p>
+
+          <div className="autor-box">
+            <p>
+              <b>{AUTOR.nombre}</b>
+            </p>
+            <p>
+              Ciclo {AUTOR.ciclo} · Curso: {AUTOR.curso}
+            </p>
+            <p>
+              Docente: {AUTOR.docente}
+            </p>
+            <p>Periodo académico: {AUTOR.periodo}</p>
+          </div>
+
           <div className="chips">
-            <span className="chip">IV ciclo</span>
-            <span className="chip">2026-II</span>
+            <span className="chip">{AUTOR.curso}</span>
+            <span className="chip">{AUTOR.ciclo} ciclo</span>
+            <span className="chip">{AUTOR.periodo}</span>
             <span className="chip">UNSM · Tarapoto</span>
           </div>
         </div>

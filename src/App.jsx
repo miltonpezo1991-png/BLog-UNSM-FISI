@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
-import { UNIDADES, EXAMENES, SEMANAS_CLASE } from './config'
+import { UNIDADES, EXAMENES, SEMANAS_CLASE, AUTOR } from './config'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import LoginModal from './components/LoginModal'
@@ -181,11 +181,14 @@ export default function App() {
           <img src="assets/img/logo-fisi.png" alt="FISI" />
         </div>
         <p>
-          <b>Bitácora Académica</b> · Universidad Nacional de San Martín
+          <b>Blog de Trabajo UNSM-FISI</b> · Universidad Nacional de San Martín
         </p>
         <p>Facultad de Ingeniería de Sistemas e Informática · Tarapoto, Perú</p>
+        <p>
+          {AUTOR.nombre} · Ciclo {AUTOR.ciclo} · {AUTOR.curso} · Docente: {AUTOR.docente}
+        </p>
         <p style={{ marginTop: 6, fontSize: '0.8rem', opacity: 0.75 }}>
-          Proyecto académico · 2026-II
+          Proyecto académico · {AUTOR.periodo}
         </p>
       </footer>
 
