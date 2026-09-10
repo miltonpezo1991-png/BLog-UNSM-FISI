@@ -10,7 +10,6 @@ import PostDetail from './components/PostDetail'
 export default function App() {
   const [publicaciones, setPublicaciones] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [unidad, setUnidad] = useState(1)
   const [modales, setModales] = useState({ login: false, publicar: false, detalle: null })
 
   async function cargar() {
@@ -37,13 +36,21 @@ export default function App() {
       })
       const ultima = u.semanas[u.semanas.length - 1]
       const examenSemana = EXAMENES[ultima + 1] ? ultima + 1 : null
-      return { ...u, semanas, examenSemana, examenLabel: examenSemana ? EXAMENES[examenSemana] : null }
+      return {
+        ...u,
+        semanas,
+        examenSemana,
+        examenLabel: examenSemana ? EXAMENES[examenSemana] : null,
+      }
     })
   }, [publicaciones])
 
-  const unidadActiva = datosUnidad.find((u) => u.unidad === unidad) ?? datosUnidad[0]
-  const totalPosts = publicaciones.length
-  const ultimaPub = publicaciones[0]
+  const stats = {
+    publicaciones: publicaciones.length,
+    unidades: datosUnidad.length,
+    semanas: SEMANAS_CLASE,
+    examenes: Object.keys(EXAMENES).length,
+  }
 
   return (
     <>
@@ -53,141 +60,133 @@ export default function App() {
         onPublicar={() => setModales((m) => ({ ...m, publicar: true }))}
       />
 
-      <Hero />
+      <Hero stats={stats} />
 
-      <main className="container sections">
-        <section className="units" id="trabajos">
-          <h2>Mis trabajos</h2>
-          <p className="units-sub">
-            Organizados por unidades académicas y semanas de clase. Haz clic en una
-            semana para ver sus publicaciones.
-          </p>
+      <main className="timeline container" id="trabajos">
+        <span className="page-label">Calendario académico</span>
+        <h2>Mis trabajos por semana</h2>
+        <p className="intro">
+          El semestre tiene 16 semanas: 13 de clases y 3 de exámenes. Haz clic en
+          cualquier trabajo para ver su contenido y comentar.
+        </p>
 
-          <div className="unit-tabs">
-            {datosUnidad.map((u) => (
-              <button
-                key={u.unidad}
-                className={`unit-tab ${u.unidad === unidad ? 'active' : ''}`}
-                onClick={() => setUnidad(u.unidad)}
-              >
-                Unidad {u.unidad}
-                <small>
-                  {u.semanas.length} semanas ·{' '}
+        {cargando ? (
+          <div className="loading">Cargando publicaciones…</div>
+        ) : (
+          datosUnidad.map((u) => (
+            <section className="unit-group" key={u.unidad}>
+              <div className="unit-head">
+                <span className="badge-unit">Unidad {u.unidad}</span>
+                <span className="unit-sub">
+                  {u.semanas.length} semanas de clase ·{' '}
                   {publicaciones.filter((p) => p.unidad === u.unidad).length} publicaciones
-                </small>
-              </button>
-            ))}
-          </div>
+                </span>
+              </div>
 
-          {cargando ? (
-            <div className="loading">Cargando publicaciones…</div>
-          ) : (
-            <div className="weeks">
-              {unidadActiva?.semanas.map((s) => (
-                <button key={s.semana} className="week-card">
-                  <h3>Semana {s.semana}</h3>
-                  <span className="week-count">
-                    <b>{s.posts.length}</b> {s.posts.length === 1 ? 'trabajo' : 'trabajos'}
-                  </span>
-                  {s.posts.length === 0 ? (
-                    <p className="empty-week" style={{ margin: 0, border: 'none', padding: '14px 0 0', textAlign: 'left' }}>
-                      Sin publicaciones todavía.
-                    </p>
-                  ) : (
-                    s.posts.map((p) => (
-                      <div
-                        key={p.id}
-                        className="post-card"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setModales((m) => ({ ...m, detalle: p }))
-                        }}
-                      >
-                        <div className="pc-titulo">{p.titulo}</div>
-                        <div className="pc-tipo">{p.tipo} · {p.asignatura}</div>
+              {u.semanas.map((s) => (
+                <div className="u-week" key={s.semana}>
+                  <div className="week-rail">
+                    <span className="dot" />
+                  </div>
+                  <div className="week-body">
+                    <div className="week-title">
+                      <span className="week-label">Semana {s.semana}</span>
+                      <span className="week-meta">
+                        {s.posts.length} {s.posts.length === 1 ? 'trabajo' : 'trabajos'}
+                      </span>
+                    </div>
+                    {s.posts.length === 0 ? (
+                      <p className="empty-week">Sin publicaciones todavía.</p>
+                    ) : (
+                      <div className="post-list">
+                        {s.posts.map((p) => (
+                          <div
+                            key={p.id}
+                            className="post-row"
+                            onClick={() => setModales((m) => ({ ...m, detalle: p }))}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') setModales((m) => ({ ...m, detalle: p }))
+                            }}
+                          >
+                            <span className="post-tipo">{p.tipo}</span>
+                            <strong>{p.titulo}</strong>
+                            <span className="post-asig">{p.asignatura}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))
-                  )}
-                </button>
+                    )}
+                  </div>
+                </div>
               ))}
-              {unidadActiva?.examenSemana && (
-                <div className="exam-card">
-                  <h3>Semana {unidadActiva.examenSemana}</h3>
-                  <span className="week-count">🏁 {unidadActiva.examenLabel}</span>
+
+              {u.examenSemana && (
+                <div className="u-week exam-week">
+                  <div className="week-rail">
+                    <span className="dot exam-dot" />
+                  </div>
+                  <div className="week-body">
+                    <div className="week-title">
+                      <span className="week-label">Semana {u.examenSemana}</span>
+                      <span className="week-meta exam-label">{u.examenLabel}</span>
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
-          )}
-
-          <div className="publicaciones-meta">
-            <span className="stat">
-              <b>{totalPosts}</b> publicaciones
-            </span>
-            <span className="stat">
-              <b>{datosUnidad.length}</b> unidades académicas
-            </span>
-            <span className="stat">
-              <b>{SEMANAS_CLASE}</b> semanas de clase
-            </span>
-            <span className="stat">
-              <b>{Object.keys(EXAMENES).length}</b> exámenes
-            </span>
-            <span className="stat">
-              {ultimaPub ? (
-                <>
-                  Última: <b>{ultimaPub.titulo}</b>
-                </>
-              ) : (
-                <>Sin publicaciones aún</>
-              )}
-            </span>
-          </div>
-        </section>
-
-        <section className="about" id="sobre">
-          <div className="container">
-            <h2 style={{ color: 'var(--unsm-green-dark)', marginBottom: 6 }}>Sobre este espacio</h2>
-            <p className="units-sub" style={{ marginBottom: 18 }}>
-              Un portafolio académico para organizar, compartir y mejorar mis trabajos de clase.
-            </p>
-            <div className="about-grid">
-              <div>
-                <h3>Estructura</h3>
-                <ul>
-                  <li>Trabajos organizados por unidades y semanas.</li>
-                  <li>Archivos, evidencias e imágenes por publicación.</li>
-                  <li>Etiquetas para identificar cada tipo de trabajo.</li>
-                </ul>
-              </div>
-              <div>
-                <h3>Participación</h3>
-                <ul>
-                  <li>Comentarios identificados con inicio de sesión.</li>
-                  <li>Aportes, preguntas y críticas constructivas.</li>
-                  <li>Solo el autor publica y administra los trabajos.</li>
-                </ul>
-              </div>
-              <div>
-                <h3>Almacenamiento</h3>
-                <ul>
-                  <li>Base de datos en Supabase (PostgreSQL).</li>
-                  <li>Archivos alojados en Supabase Storage.</li>
-                  <li>Desplegado en GitHub Pages.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
+            </section>
+          ))
+        )}
       </main>
+
+      <section className="about" id="sobre">
+        <div className="container">
+          <h2>Sobre este espacio</h2>
+          <p className="intro">
+            Un portafolio académico para organizar, compartir y mejorar mis trabajos
+            de clase durante el ciclo.
+          </p>
+          <div className="about-grid">
+            <div className="about-card">
+              <h3>📚 Organización</h3>
+              <ul>
+                <li>Trabajos ordenados por unidades y semanas.</li>
+                <li>Archivos, evidencias e imágenes por publicación.</li>
+                <li>Exámenes marcados en el calendario.</li>
+              </ul>
+            </div>
+            <div className="about-card">
+              <h3>💬 Participación</h3>
+              <ul>
+                <li>Comentarios con inicio de sesión.</li>
+                <li>Aportes, preguntas y críticas constructivas.</li>
+                <li>Solo el autor publica y administra los trabajos.</li>
+              </ul>
+            </div>
+            <div className="about-card">
+              <h3>⚙️ Tecnología</h3>
+              <ul>
+                <li>Base de datos en Supabase (PostgreSQL).</li>
+                <li>Archivos alojados en Supabase Storage.</li>
+                <li>Desplegado en GitHub Pages.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <footer>
         <div className="footer-logos">
           <img src="assets/img/logo-unsm.png" alt="UNSM" />
           <img src="assets/img/logo-fisi.png" alt="FISI" />
         </div>
-        <p><b>Bitácora Académica</b> · Universidad Nacional de San Martín</p>
+        <p>
+          <b>Bitácora Académica</b> · Universidad Nacional de San Martín
+        </p>
         <p>Facultad de Ingeniería de Sistemas e Informática · Tarapoto, Perú</p>
-        <p style={{ marginTop: 6, fontSize: '0.8rem', opacity: 0.75 }}>Proyecto académico · 2026-II</p>
+        <p style={{ marginTop: 6, fontSize: '0.8rem', opacity: 0.75 }}>
+          Proyecto académico · 2026-II
+        </p>
       </footer>
 
       {modales.login && <LoginModal onClose={() => setModales((m) => ({ ...m, login: false }))} />}

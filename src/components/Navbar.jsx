@@ -6,13 +6,13 @@ export default function Navbar({ onLogin, onLogout, onPublicar }) {
   const iniciales = user?.email ? user.email[0].toUpperCase() : '?'
 
   return (
-    <header className="navbar">
-      <div className="container navbar-inner">
+    <header className="topbar">
+      <div className="container topbar-inner">
         <div className="brand">
           <img src="assets/img/logo-unsm.png" alt="Logo UNSM" />
           <div className="brand-text">
             <strong>Bitácora Académica</strong>
-            <small>Universidad Nacional de San Martín · FISI</small>
+            <small>UNSM · FISI — Tarapoto</small>
           </div>
         </div>
         <nav className="nav-actions">
@@ -20,11 +20,7 @@ export default function Navbar({ onLogin, onLogout, onPublicar }) {
             <>
               <span className="avatar">
                 <span className="avatar-dot">{iniciales}</span>
-                {esAdmin(user.email) ? (
-                  <em>Admin</em>
-                ) : (
-                  <span style={{ color: 'var(--ink-soft)' }}>{user.email}</span>
-                )}
+                {esAdmin(user.email) ? <em>Admin</em> : user.email}
               </span>
               {esAdmin(user.email) && (
                 <button className="btn btn-primary" onClick={onPublicar}>
