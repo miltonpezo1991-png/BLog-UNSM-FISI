@@ -21,13 +21,6 @@ export default function Hero({ stats }) {
             <p>Docente: {AUTOR.docente}</p>
             <p>Periodo académico: {AUTOR.periodo}</p>
           </div>
-
-          <div className="chips">
-            <span className="chip">{AUTOR.curso}</span>
-            <span className="chip">{AUTOR.ciclo} ciclo</span>
-            <span className="chip">{AUTOR.periodo}</span>
-            <span className="chip">UNSM · Tarapoto</span>
-          </div>
         </div>
         <div className="banner-logos">
           <img src="assets/img/logo-unsm.png" alt="Universidad Nacional de San Martín" />
