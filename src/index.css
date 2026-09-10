@@ -324,6 +324,21 @@ a {
   text-align: center;
 }
 
+.exam-card {
+  background: #fff7f0;
+  border: 2px dashed #d97706;
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-card h3 {
+  color: #b45309;
+  font-size: 1rem;
+}
+
 .publicaciones-meta {
   margin-top: 26px;
   padding: 14px 18px;

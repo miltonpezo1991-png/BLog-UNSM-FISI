@@ -7,7 +7,7 @@
 create table if not exists public.publicaciones (
   id uuid primary key default gen_random_uuid(),
   unidad smallint not null check (unidad between 1 and 3),
-  semana smallint not null check (semana between 1 and 6),
+  semana smallint not null check (semana between 1 and 16),
   titulo text not null,
   tipo text not null default 'Informe',
   asignatura text,

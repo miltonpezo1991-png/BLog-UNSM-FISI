@@ -88,7 +88,7 @@ export default function UploadModal({ onClose, onPublicado }) {
     }
   }
 
-  const maxSemana = UNIDADES.find((u) => u.unidad === Number(form.unidad))?.semanas ?? 4
+  const semanasDisponibles = UNIDADES.find((u) => u.unidad === Number(form.unidad))?.semanas ?? [1, 2, 3, 4]
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -101,7 +101,7 @@ export default function UploadModal({ onClose, onPublicado }) {
               <select value={form.unidad} onChange={(e) => set('unidad', Number(e.target.value))}>
                 {UNIDADES.map((u) => (
                   <option key={u.unidad} value={u.unidad}>
-                    Unidad {u.unidad} ({u.semanas} semanas)
+                    Unidad {u.unidad} ({u.semanas.length} semanas)
                   </option>
                 ))}
               </select>
@@ -109,9 +109,9 @@ export default function UploadModal({ onClose, onPublicado }) {
             <div className="form-row">
               <label>Semana</label>
               <select value={form.semana} onChange={(e) => set('semana', Number(e.target.value))}>
-                {Array.from({ length: maxSemana }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    Semana {i + 1}
+                {semanasDisponibles.map((w) => (
+                  <option key={w} value={w}>
+                    Semana {w}
                   </option>
                 ))}
               </select>

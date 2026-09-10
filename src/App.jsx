@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
-import { UNIDADES } from './config'
+import { UNIDADES, EXAMENES, SEMANAS_CLASE } from './config'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import LoginModal from './components/LoginModal'
@@ -29,13 +29,15 @@ export default function App() {
 
   const datosUnidad = useMemo(() => {
     return UNIDADES.map((u) => {
-      const semanas = Array.from({ length: u.semanas }, (_, i) => {
+      const semanas = u.semanas.map((semana) => {
         const posts = publicaciones
-          .filter((p) => p.unidad === u.unidad && p.semana === i + 1)
+          .filter((p) => p.unidad === u.unidad && p.semana === semana)
           .sort((a, b) => new Date(b.creado_en) - new Date(a.creado_en))
-        return { semana: i + 1, posts }
+        return { semana, posts }
       })
-      return { ...u, semanas }
+      const ultima = u.semanas[u.semanas.length - 1]
+      const examenSemana = EXAMENES[ultima + 1] ? ultima + 1 : null
+      return { ...u, semanas, examenSemana, examenLabel: examenSemana ? EXAMENES[examenSemana] : null }
     })
   }, [publicaciones])
 
@@ -108,18 +110,27 @@ export default function App() {
                   )}
                 </button>
               ))}
+              {unidadActiva?.examenSemana && (
+                <div className="exam-card">
+                  <h3>Semana {unidadActiva.examenSemana}</h3>
+                  <span className="week-count">🏁 {unidadActiva.examenLabel}</span>
+                </div>
+              )}
             </div>
           )}
 
           <div className="publicaciones-meta">
             <span className="stat">
-              <b>{totalPosts}</b> publicaciones activas
+              <b>{totalPosts}</b> publicaciones
             </span>
             <span className="stat">
-              <b>3</b> unidades académicas
+              <b>{datosUnidad.length}</b> unidades académicas
             </span>
             <span className="stat">
-              <b>14</b> semanas
+              <b>{SEMANAS_CLASE}</b> semanas de clase
+            </span>
+            <span className="stat">
+              <b>{Object.keys(EXAMENES).length}</b> exámenes
             </span>
             <span className="stat">
               {ultimaPub ? (
