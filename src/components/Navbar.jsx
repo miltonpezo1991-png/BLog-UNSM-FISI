@@ -1,7 +1,7 @@
 import { useAuth } from '../auth/AuthContext'
 import { esAdmin } from '../config'
 
-export default function Navbar({ onLogin, onLogout, onPublicar }) {
+export default function Navbar({ onLogin, onLogout, onPublicar, onRegistro }) {
   const { user } = useAuth()
   const nombre =
     user?.user_metadata?.nombre ||
@@ -39,9 +39,14 @@ export default function Navbar({ onLogin, onLogout, onPublicar }) {
               </button>
             </>
           ) : (
-            <button className="btn btn-primary" onClick={onLogin}>
-              Iniciar sesión
-            </button>
+            <>
+              <button className="btn btn-outline" onClick={onRegistro}>
+                Registrarse
+              </button>
+              <button className="btn btn-primary" onClick={onLogin}>
+                Iniciar sesión
+              </button>
+            </>
           )}
         </nav>
       </div>

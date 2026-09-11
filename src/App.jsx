@@ -10,7 +10,7 @@ import PostDetail from './components/PostDetail'
 export default function App() {
   const [publicaciones, setPublicaciones] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [modales, setModales] = useState({ login: false, publicar: false, detalle: null })
+  const [modales, setModales] = useState({ login: false, registro: false, publicar: false, detalle: null })
 
   async function cargar() {
     setCargando(true)
@@ -56,6 +56,7 @@ export default function App() {
     <>
       <Navbar
         onLogin={() => setModales((m) => ({ ...m, login: true }))}
+        onRegistro={() => setModales((m) => ({ ...m, registro: true }))}
         onLogout={() => supabase.auth.signOut()}
         onPublicar={() => setModales((m) => ({ ...m, publicar: true }))}
       />
@@ -195,7 +196,8 @@ export default function App() {
         </p>
       </footer>
 
-      {modales.login && <LoginModal onClose={() => setModales((m) => ({ ...m, login: false }))} />}
+      {modales.login && <LoginModal initialMode="login" onClose={() => setModales((m) => ({ ...m, login: false }))} />}
+      {modales.registro && <LoginModal initialMode="signup" onClose={() => setModales((m) => ({ ...m, registro: false }))} />}
       {modales.publicar && (
         <UploadModal
           onClose={() => setModales((m) => ({ ...m, publicar: false }))}

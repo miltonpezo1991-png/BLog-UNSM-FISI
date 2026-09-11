@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext'
 
-export default function LoginModal({ onClose }) {
+export default function LoginModal({ onClose, initialMode = 'login' }) {
   const { iniciarSesion, crearCuenta } = useAuth()
-  const [modo, setModo] = useState('login')
+  const [modo, setModo] = useState(initialMode)
   const [correo, setCorreo] = useState('')
   const [contrasena, setContrasena] = useState('')
   const [nombre, setNombre] = useState('')
