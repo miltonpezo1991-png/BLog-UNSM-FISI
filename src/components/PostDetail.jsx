@@ -94,14 +94,9 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
   })
 
   const url = post.archivo_url || ''
-  const esPdf = /\.pdf$/i.test(url)
-  const esOffice = /\.(ppt|pptx|doc|docx)$/i.test(url)
-  const esImagen = /\.(png|jpe?g|gif|webp|bmp)$/i.test(url)
-  const visorFuente = esPdf
-    ? url
-    : esOffice
-      ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`
-      : null
+  const viewUrl = /\.(ppt|pptx|doc|docx)$/i.test(url)
+    ? `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`
+    : url
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -134,22 +129,11 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
           <video key={u} className="portada" src={u} controls />
         ))}
         {post.archivo_url && (
-          <div style={{ marginTop: 12 }}>
-            {visorFuente && (
-              <iframe
-                src={visorFuente}
-                title="Vista previa del trabajo"
-                className="visor-iframe"
-                loading="lazy"
-                allowFullScreen
-              />
-            )}
-            <p style={{ marginTop: 8 }}>
-              <a className="archivo-link" href={post.archivo_url} target="_blank" rel="noreferrer">
-                📄 Descargar archivo del trabajo
-              </a>
-            </p>
-          </div>
+          <p style={{ marginTop: 10 }}>
+            <a className="archivo-link" href={viewUrl} target="_blank" rel="noreferrer">
+              📄 Ver y descargar archivo del trabajo
+            </a>
+          </p>
         )}
 
         <div className="reaccion-row" style={{ marginTop: 12 }}>

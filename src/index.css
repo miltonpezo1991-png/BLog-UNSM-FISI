@@ -565,15 +565,6 @@ a {
   background: var(--green-dark);
 }
 
-.visor-iframe {
-  width: 100%;
-  height: 480px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: var(--shadow);
-}
-
 /* ============ About ============ */
 .about {
   background: #fff;
