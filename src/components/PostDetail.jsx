@@ -3,7 +3,7 @@ import { supabase } from '../supabase'
 import { useAuth } from '../auth/AuthContext'
 import { esAdmin } from '../config'
 
-export default function PostDetail({ post, onClose, onCambio, onEditar }) {
+export default function PostDetail({ post, onClose, onCambio, onCambioReacciones, onEditar }) {
   const { user } = useAuth()
   const [comentarios, setComentarios] = useState([])
   const [texto, setTexto] = useState('')
@@ -61,6 +61,7 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
       setReaccione(true)
       setReacciones((r) => r + 1)
     }
+    if (onCambioReacciones) onCambioReacciones()
   }
 
   async function comentar(e) {

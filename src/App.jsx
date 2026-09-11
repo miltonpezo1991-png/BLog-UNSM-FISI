@@ -29,12 +29,16 @@ export default function App() {
       .order('creado_en', { ascending: false })
     setPublicaciones(data ?? [])
 
+    await cargarReacciones()
+
+    setCargando(false)
+  }
+
+  async function cargarReacciones() {
     const { data: reac } = await supabase.from('reacciones').select('publicacion_id')
     const conteo = {}
     if (reac) for (const r of reac) conteo[r.publicacion_id] = (conteo[r.publicacion_id] || 0) + 1
     setReacciones(conteo)
-
-    setCargando(false)
   }
 
   useEffect(() => {
@@ -286,6 +290,7 @@ export default function App() {
           post={modales.detalle}
           onClose={() => setModales((m) => ({ ...m, detalle: null }))}
           onCambio={cargar}
+          onCambioReacciones={cargarReacciones}
           onEditar={(p) => setModales((m) => ({ ...m, detalle: null, editar: p }))}
         />
       )}
