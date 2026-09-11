@@ -11,6 +11,8 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
   const [confirmar, setConfirmar] = useState(false)
   const [reacciones, setReacciones] = useState(0)
   const [reaccione, setReaccione] = useState(false)
+  const [editandoId, setEditandoId] = useState(null)
+  const [editTexto, setEditTexto] = useState('')
 
   async function cargarComentarios() {
     const { data } = await supabase
@@ -85,6 +87,23 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
     setCargando(false)
     onCambio()
     onClose()
+  }
+
+  async function guardarEdicion(c) {
+    const texto = editTexto.trim()
+    if (!texto) return
+    setCargando(true)
+    const { error } = await supabase
+      .from('comentarios')
+      .update({ contenido: texto })
+      .eq('id', c.id)
+      .eq('autor_correo', user.email)
+    setCargando(false)
+    if (!error) {
+      setEditandoId(null)
+      setEditTexto('')
+      cargarComentarios()
+    }
   }
 
   const fecha = new Date(post.creado_en).toLocaleDateString('es-PE', {
@@ -167,8 +186,47 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
                 <span className="c-fecha">
                   {new Date(c.creado_en).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' })}
                 </span>
+                {user?.email === c.autor_correo && editandoId !== c.id && (
+                  <button
+                    className="btn btn-ghost"
+                    style={{ marginLeft: 'auto', fontSize: '0.75rem' }}
+                    onClick={() => {
+                      setEditandoId(c.id)
+                      setEditTexto(c.contenido)
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+                )}
               </div>
-              <p>{c.contenido}</p>
+              {editandoId === c.id ? (
+                <textarea
+                  rows={3}
+                  className="comment-form"
+                  style={{ width: '100%', boxSizing: 'border-box' }}
+                  value={editTexto}
+                  onChange={(e) => setEditTexto(e.target.value)}
+                  autoFocus
+                />
+              ) : (
+                <p>{c.contenido}</p>
+              )}
+              {editandoId === c.id && (
+                <div className="form-actions" style={{ marginTop: 6 }}>
+                  <button className="btn btn-primary" disabled={cargando || !editTexto.trim()} onClick={() => guardarEdicion(c)}>
+                    Guardar
+                  </button>
+                  <button
+                    className="btn btn-ghost"
+                    onClick={() => {
+                      setEditandoId(null)
+                      setEditTexto('')
+                    }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 

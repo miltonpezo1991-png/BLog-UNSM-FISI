@@ -74,6 +74,12 @@ drop policy if exists "delete_autor_comentario" on public.comentarios;
 create policy "delete_autor_comentario" on public.comentarios
   for delete using (auth.jwt() ->> 'email' = autor_correo);
 
+-- Comentarios: el autor edita los suyos
+drop policy if exists "update_autor_comentario" on public.comentarios;
+create policy "update_autor_comentario" on public.comentarios
+  for update using (auth.jwt() ->> 'email' = autor_correo)
+  with check (auth.jwt() ->> 'email' = autor_correo);
+
 -- ============================================================
 -- Reacciones (me gusta) por publicacion
 -- ============================================================
