@@ -13,6 +13,7 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
   const [reaccione, setReaccione] = useState(false)
   const [editandoId, setEditandoId] = useState(null)
   const [editTexto, setEditTexto] = useState('')
+  const [borrarId, setBorrarId] = useState(null)
 
   async function cargarComentarios() {
     const { data } = await supabase
@@ -106,6 +107,18 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
     }
   }
 
+  async function borrarComentario(c) {
+    setCargando(true)
+    await supabase
+      .from('comentarios')
+      .delete()
+      .eq('id', c.id)
+      .eq('autor_correo', user.email)
+    setCargando(false)
+    setBorrarId(null)
+    cargarComentarios()
+  }
+
   const fecha = new Date(post.creado_en).toLocaleDateString('es-PE', {
     year: 'numeric',
     month: 'short',
@@ -186,17 +199,37 @@ export default function PostDetail({ post, onClose, onCambio, onEditar }) {
                 <span className="c-fecha">
                   {new Date(c.creado_en).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short' })}
                 </span>
-                {user?.email === c.autor_correo && editandoId !== c.id && (
-                  <button
-                    className="btn btn-ghost"
-                    style={{ marginLeft: 'auto', fontSize: '0.75rem' }}
-                    onClick={() => {
-                      setEditandoId(c.id)
-                      setEditTexto(c.contenido)
-                    }}
-                  >
-                    ✏️ Editar
-                  </button>
+                {user?.email === c.autor_correo && editandoId !== c.id && borrarId !== c.id && (
+                  <>
+                    <button
+                      className="btn btn-ghost"
+                      style={{ marginLeft: 'auto', fontSize: '0.75rem' }}
+                      onClick={() => {
+                        setEditandoId(c.id)
+                        setEditTexto(c.contenido)
+                      }}
+                    >
+                      ✏️ Editar
+                    </button>
+                    <button
+                      className="btn btn-ghost"
+                      style={{ fontSize: '0.75rem', color: '#b91c1c' }}
+                      onClick={() => setBorrarId(c.id)}
+                    >
+                      🗑 Eliminar
+                    </button>
+                  </>
+                )}
+                {user?.email === c.autor_correo && borrarId === c.id && (
+                  <span style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--ink-soft)' }}>¿Eliminar comentario?</span>
+                    <button className="btn btn-primary" style={{ background: '#b91c1c', padding: '2px 10px', fontSize: '0.75rem' }} disabled={cargando} onClick={() => borrarComentario(c)}>
+                      Sí
+                    </button>
+                    <button className="btn btn-ghost" style={{ padding: '2px 10px', fontSize: '0.75rem' }} onClick={() => setBorrarId(null)}>
+                      No
+                    </button>
+                  </span>
                 )}
               </div>
               {editandoId === c.id ? (
