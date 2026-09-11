@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
-import { UNIDADES, EXAMENES, SEMANAS_CLASE, AUTOR, TIPOS } from './config'
+import { UNIDADES, EXAMENES, SEMANAS_CLASE, TIPOS } from './config'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import LoginModal from './components/LoginModal'
@@ -268,14 +268,8 @@ export default function App() {
           <b>Blog de Trabajo UNSM-FISI</b> · Universidad Nacional de San Martín
         </p>
         <p>Facultad de Ingeniería de Sistemas e Informática · Tarapoto, Perú</p>
-        <p>
-          {AUTOR.nombre} · Ciclo {AUTOR.ciclo}
-        </p>
-        <p>
-          Curso: {AUTOR.curso} · Docente: {AUTOR.docente}
-        </p>
         <p style={{ marginTop: 6, fontSize: '0.8rem', opacity: 0.75 }}>
-          Proyecto académico · {AUTOR.periodo}
+          Proyecto académico · 2026
         </p>
       </footer>
 
