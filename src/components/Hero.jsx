@@ -13,7 +13,7 @@ export default function Hero({ stats }) {
           </h1>
 
           <div className="autor-box">
-            <p>Semestre: {AUTOR.periodo}</p>
+            <p>Semestre académico: {AUTOR.periodo}</p>
             <p>Ciclo: {AUTOR.ciclo}</p>
             <p>Curso: {AUTOR.curso}</p>
             <p>Docente: {AUTOR.docente}</p>
