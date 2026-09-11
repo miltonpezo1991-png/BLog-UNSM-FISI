@@ -6,6 +6,7 @@ export default function LoginModal({ onClose }) {
   const [modo, setModo] = useState('login')
   const [correo, setCorreo] = useState('')
   const [contrasena, setContrasena] = useState('')
+  const [nombre, setNombre] = useState('')
   const [mensaje, setMensaje] = useState(null)
   const [cargando, setCargando] = useState(false)
 
@@ -20,7 +21,7 @@ export default function LoginModal({ onClose }) {
     }
     const { error } = modo === 'login'
       ? await iniciarSesion(correo, contrasena)
-      : await crearCuenta(correo, contrasena)
+      : await crearCuenta(correo, contrasena, nombre)
 
     setCargando(false)
     if (error) {
@@ -42,6 +43,18 @@ export default function LoginModal({ onClose }) {
         <h2>Iniciar sesión</h2>
         <p className="units-sub">Necesario para comentar{correo ? '.' : '.'} </p>
         <form onSubmit={enviar}>
+          {modo === 'signup' && (
+            <div className="form-row">
+              <label>Nombre (cómo aparecerás en tus comentarios)</label>
+              <input
+                type="text"
+                required
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                placeholder="Ej: María Pérez"
+              />
+            </div>
+          )}
           <div className="form-row">
             <label>Correo</label>
             <input

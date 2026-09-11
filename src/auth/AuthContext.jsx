@@ -28,10 +28,13 @@ export function AuthProvider({ children }) {
     return { error }
   }
 
-  async function crearCuenta(correo, contrasena) {
+  async function crearCuenta(correo, contrasena, nombre) {
     const { error } = await supabase.auth.signUp({
       email: correo,
       password: contrasena,
+      options: {
+        data: { nombre: nombre || correo.split('@')[0] },
+      },
     })
     return { error }
   }

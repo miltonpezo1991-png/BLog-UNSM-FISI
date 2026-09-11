@@ -28,10 +28,12 @@ export default function PostDetail({ post, onClose, onCambio }) {
     e.preventDefault()
     if (!texto.trim()) return
     setCargando(true)
+    const autorNombre =
+      user?.user_metadata?.nombre || user.email.split('@')[0]
     const { error } = await supabase.from('comentarios').insert({
       publicacion_id: post.id,
       autor_correo: user.email,
-      autor_nombre: user.email.split('@')[0],
+      autor_nombre: autorNombre,
       contenido: texto.trim(),
     })
     setCargando(false)

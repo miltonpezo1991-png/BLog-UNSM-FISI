@@ -3,7 +3,10 @@ import { esAdmin } from '../config'
 
 export default function Navbar({ onLogin, onLogout, onPublicar }) {
   const { user } = useAuth()
-  const iniciales = user?.email ? user.email[0].toUpperCase() : '?'
+  const nombre =
+    user?.user_metadata?.nombre ||
+    (user?.email ? user.email.split('@')[0] : '')
+  const iniciales = nombre[0]?.toUpperCase() ?? '?'
 
   return (
     <header className="topbar">
@@ -20,7 +23,11 @@ export default function Navbar({ onLogin, onLogout, onPublicar }) {
             <>
               <span className="avatar">
                 <span className="avatar-dot">{iniciales}</span>
-                {esAdmin(user.email) ? <em>Admin</em> : user.email}
+                {esAdmin(user.email) ? (
+                  <em>Admin · {nombre}</em>
+                ) : (
+                  <span>{nombre}</span>
+                )}
               </span>
               {esAdmin(user.email) && (
                 <button className="btn btn-primary" onClick={onPublicar}>
