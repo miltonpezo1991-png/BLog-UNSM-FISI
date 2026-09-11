@@ -10,6 +10,8 @@ export const EXAMENES = {
   16: 'Examen Final',
 }
 
+export const TIPOS = ['Informe', 'Mapa mental', 'Presentación', 'Ensayo', 'Otro']
+
 export const SEMANAS_CLASE = UNIDADES.reduce((acc, u) => acc + u.semanas.length, 0)
 
 export const AUTOR = {

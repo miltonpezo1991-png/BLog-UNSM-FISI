@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from './supabase'
-import { UNIDADES, EXAMENES, SEMANAS_CLASE, AUTOR } from './config'
+import { UNIDADES, EXAMENES, SEMANAS_CLASE, AUTOR, TIPOS } from './config'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import LoginModal from './components/LoginModal'
@@ -9,8 +9,17 @@ import PostDetail from './components/PostDetail'
 
 export default function App() {
   const [publicaciones, setPublicaciones] = useState([])
+  const [reacciones, setReacciones] = useState({})
   const [cargando, setCargando] = useState(true)
-  const [modales, setModales] = useState({ login: false, registro: false, publicar: false, detalle: null })
+  const [busqueda, setBusqueda] = useState('')
+  const [tipoFiltro, setTipoFiltro] = useState('todos')
+  const [modales, setModales] = useState({
+    login: false,
+    registro: false,
+    publicar: false,
+    detalle: null,
+    editar: null,
+  })
 
   async function cargar() {
     setCargando(true)
@@ -19,6 +28,12 @@ export default function App() {
       .select('*')
       .order('creado_en', { ascending: false })
     setPublicaciones(data ?? [])
+
+    const { data: reac } = await supabase.from('reacciones').select('publicacion_id')
+    const conteo = {}
+    if (reac) for (const r of reac) conteo[r.publicacion_id] = (conteo[r.publicacion_id] || 0) + 1
+    setReacciones(conteo)
+
     setCargando(false)
   }
 
@@ -52,6 +67,21 @@ export default function App() {
     examenes: Object.keys(EXAMENES).length,
   }
 
+  const filtradas = useMemo(() => {
+    const q = busqueda.trim().toLowerCase()
+    return publicaciones.filter((p) => {
+      const okQ =
+        !q ||
+        [p.titulo, p.resumen, p.contenido, p.asignatura, p.periodo, p.tipo, ...(p.etiquetas || [])]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      const okT = tipoFiltro === 'todos' || p.tipo === tipoFiltro
+      return okQ && okT
+    })
+  }, [publicaciones, busqueda, tipoFiltro])
+
+  const buscando = busqueda.trim() !== '' || tipoFiltro !== 'todos'
+
   return (
     <>
       <Navbar
@@ -71,8 +101,61 @@ export default function App() {
           cualquier trabajo para ver su contenido y comentar.
         </p>
 
+        <div className="busqueda">
+          <input
+            type="search"
+            placeholder="Buscar por título, asignatura o etiqueta…"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+          <select value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)}>
+            <option value="todos">Todos los tipos</option>
+            {TIPOS.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+          {buscando && (
+            <button className="btn btn-ghost" onClick={() => { setBusqueda(''); setTipoFiltro('todos') }}>
+              Limpiar
+            </button>
+          )}
+        </div>
+        {buscando && (
+          <p className="filtro-resumen">
+            {filtradas.length} {filtradas.length === 1 ? 'resultado' : 'resultados'} encontrados
+          </p>
+        )}
+
         {cargando ? (
           <div className="loading">Cargando publicaciones…</div>
+        ) : buscando ? (
+          <div className="resultados">
+            {filtradas.length === 0 ? (
+              <p className="empty-week">Sin resultados para tu búsqueda.</p>
+            ) : (
+              filtradas.map((p) => (
+                <div
+                  key={p.id}
+                  className="post-row"
+                  onClick={() => setModales((m) => ({ ...m, detalle: p }))}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') setModales((m) => ({ ...m, detalle: p }))
+                  }}
+                >
+                  <span className="post-tipo">{p.tipo}</span>
+                  <strong>{p.titulo}</strong>
+                  <span className="post-asig">
+                    Unidad {p.unidad} · Semana {p.semana} · {p.asignatura}
+                  </span>
+                  <span className="post-reacciones">👍 {(reacciones[p.id] || 0)}</span>
+                </div>
+              ))
+            )}
+          </div>
         ) : (
           datosUnidad.map((u) => (
             <section className="unit-group" key={u.unidad}>
@@ -114,6 +197,7 @@ export default function App() {
                             <span className="post-tipo">{p.tipo}</span>
                             <strong>{p.titulo}</strong>
                             <span className="post-asig">{p.asignatura}</span>
+                            <span className="post-reacciones">👍 {(reacciones[p.id] || 0)}</span>
                           </div>
                         ))}
                       </div>
@@ -136,8 +220,7 @@ export default function App() {
                 </div>
               )}
             </section>
-          ))
-        )}
+          )))}
       </main>
 
       <section className="about" id="sobre">
@@ -209,6 +292,14 @@ export default function App() {
           post={modales.detalle}
           onClose={() => setModales((m) => ({ ...m, detalle: null }))}
           onCambio={cargar}
+          onEditar={(p) => setModales((m) => ({ ...m, detalle: null, editar: p }))}
+        />
+      )}
+      {modales.editar && (
+        <UploadModal
+          post={modales.editar}
+          onClose={() => setModales((m) => ({ ...m, editar: null }))}
+          onPublicado={cargar}
         />
       )}
     </>

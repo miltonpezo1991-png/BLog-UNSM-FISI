@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../supabase'
-import { UNIDADES } from '../config'
+import { UNIDADES, TIPOS } from '../config'
 import { useAuth } from '../auth/AuthContext'
-
-const TIPOS = ['Informe', 'Mapa mental', 'Presentación', 'Ensayo', 'Otro']
 
 function subirArchivo(carpeta, archivo) {
   const ruta = `${carpeta}/${Date.now()}-${archivo.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
@@ -13,18 +11,19 @@ function subirArchivo(carpeta, archivo) {
   })
 }
 
-export default function UploadModal({ onClose, onPublicado }) {
+export default function UploadModal({ onClose, onPublicado, post = null }) {
   const { user } = useAuth()
+  const esEdicion = Boolean(post)
   const [form, setForm] = useState({
-    unidad: 1,
-    semana: 1,
-    titulo: '',
-    tipo: TIPOS[0],
-    asignatura: 'Teoría General de Sistemas',
-    periodo: '2026-II',
-    resumen: '',
-    contenido: '',
-    etiquetas: '',
+    unidad: post?.unidad ?? 1,
+    semana: post?.semana ?? 1,
+    titulo: post?.titulo ?? '',
+    tipo: post?.tipo ?? TIPOS[0],
+    asignatura: post?.asignatura ?? 'Teoría General de Sistemas',
+    periodo: post?.periodo ?? '2026-II',
+    resumen: post?.resumen ?? '',
+    contenido: post?.contenido ?? '',
+    etiquetas: post?.etiquetas?.join(', ') ?? '',
     archivo: null,
     portada: null,
     imagenes: [],
@@ -47,10 +46,10 @@ export default function UploadModal({ onClose, onPublicado }) {
     setCargando(true)
     try {
       const carpeta = `unidad-${form.unidad}/semana-${form.semana}`
-      let archivoUrl = null
-      let portadaUrl = null
-      const imagenes = []
-      const videos = []
+      let archivoUrl = post?.archivo_url ?? null
+      let portadaUrl = post?.portada_url ?? null
+      const imagenes = post?.imagenes?.length ? [...post.imagenes] : []
+      const videos = post?.videos?.length ? [...post.videos] : []
 
       if (form.archivo) archivoUrl = await subirArchivo(carpeta, form.archivo)
       if (form.portada) portadaUrl = await subirArchivo(carpeta, form.portada)
@@ -62,7 +61,7 @@ export default function UploadModal({ onClose, onPublicado }) {
         .map((t) => t.trim())
         .filter(Boolean)
 
-      const { error } = await supabase.from('publicaciones').insert({
+      const datos = {
         unidad: Number(form.unidad),
         semana: Number(form.semana),
         titulo: form.titulo.trim(),
@@ -76,8 +75,19 @@ export default function UploadModal({ onClose, onPublicado }) {
         portada_url: portadaUrl,
         imagenes,
         videos,
-        autor_correo: user.email,
-      })
+      }
+
+      let error
+      if (esEdicion) {
+        const res = await supabase.from('publicaciones').update(datos).eq('id', post.id)
+        error = res.error
+      } else {
+        const res = await supabase.from('publicaciones').insert({
+          ...datos,
+          autor_correo: user.email,
+        })
+        error = res.error
+      }
 
       if (error) throw error
       onPublicado()
@@ -93,7 +103,7 @@ export default function UploadModal({ onClose, onPublicado }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
-        <h2>Publicar nuevo trabajo</h2>
+        <h2>{esEdicion ? 'Editar trabajo' : 'Publicar nuevo trabajo'}</h2>
         <form onSubmit={enviar}>
           <div className="form-grid">
             <div className="form-row">
@@ -181,7 +191,7 @@ export default function UploadModal({ onClose, onPublicado }) {
               Cancelar
             </button>
             <button type="submit" className="btn btn-primary" disabled={cargando}>
-              {cargando ? 'Publicando…' : 'Publicar trabajo'}
+              {cargando ? 'Guardando…' : esEdicion ? 'Guardar cambios' : 'Publicar trabajo'}
             </button>
           </div>
         </form>

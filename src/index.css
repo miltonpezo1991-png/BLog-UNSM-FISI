@@ -493,10 +493,76 @@ a {
   margin-top: 3px;
 }
 
+.post-reacciones {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-light);
+  padding: 1px 9px;
+  border-radius: 999px;
+}
+
 .empty-week {
   margin-top: 8px;
   color: var(--ink-soft);
   font-size: 0.85rem;
+}
+
+/* ============ Busqueda y resultados ============ */
+.busqueda {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 6px;
+}
+
+.busqueda input[type='search'] {
+  flex: 1 1 240px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.busqueda input[type='search']:focus {
+  outline: 2px solid var(--green-light);
+  border-color: var(--green);
+}
+
+.busqueda select {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.filtro-resumen {
+  margin: 6px 0 14px;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+}
+
+.resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-reactivo {
+  background: var(--green);
+  color: #fff;
+}
+
+.btn-reactivo:hover {
+  background: var(--green-dark);
 }
 
 /* ============ About ============ */

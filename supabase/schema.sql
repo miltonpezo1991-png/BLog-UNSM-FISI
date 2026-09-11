@@ -75,6 +75,33 @@ create policy "delete_autor_comentario" on public.comentarios
   for delete using (auth.jwt() ->> 'email' = autor_correo);
 
 -- ============================================================
+-- Reacciones (me gusta) por publicacion
+-- ============================================================
+create table if not exists public.reacciones (
+  id uuid primary key default gen_random_uuid(),
+  publicacion_id uuid not null references public.publicaciones (id) on delete cascade,
+  autor_correo text not null,
+  creado_en timestamptz not null default now(),
+  unique (publicacion_id, autor_correo)
+);
+
+alter table public.reacciones enable row level security;
+
+drop policy if exists "lectura_publica_reacciones" on public.reacciones;
+create policy "lectura_publica_reacciones" on public.reacciones
+  for select using (true);
+
+drop policy if exists "insert_autenticado_reaccion" on public.reacciones;
+create policy "insert_autenticado_reaccion" on public.reacciones
+  for insert with check (
+    auth.role() = 'authenticated' and auth.jwt() ->> 'email' = autor_correo
+  );
+
+drop policy if exists "delete_autor_reaccion" on public.reacciones;
+create policy "delete_autor_reaccion" on public.reacciones
+  for delete using (auth.jwt() ->> 'email' = autor_correo);
+
+-- ============================================================
 -- Storage: bucket publico para archivos de trabajos
 -- ============================================================
 insert into storage.buckets (id, name, public)

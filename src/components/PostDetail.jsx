@@ -3,12 +3,14 @@ import { supabase } from '../supabase'
 import { useAuth } from '../auth/AuthContext'
 import { esAdmin } from '../config'
 
-export default function PostDetail({ post, onClose, onCambio }) {
+export default function PostDetail({ post, onClose, onCambio, onEditar }) {
   const { user } = useAuth()
   const [comentarios, setComentarios] = useState([])
   const [texto, setTexto] = useState('')
   const [cargando, setCargando] = useState(false)
   const [confirmar, setConfirmar] = useState(false)
+  const [reacciones, setReacciones] = useState(0)
+  const [reaccione, setReaccione] = useState(false)
 
   async function cargarComentarios() {
     const { data } = await supabase
@@ -19,10 +21,44 @@ export default function PostDetail({ post, onClose, onCambio }) {
     setComentarios(data ?? [])
   }
 
+  async function cargarReacciones() {
+    const { data } = await supabase
+      .from('reacciones')
+      .select('autor_correo')
+      .eq('publicacion_id', post.id)
+    setReacciones(data?.length ?? 0)
+    if (user) {
+      setReaccione(Boolean(data?.some((r) => r.autor_correo === user.email)))
+    } else {
+      setReaccione(false)
+    }
+  }
+
   useEffect(() => {
     cargarComentarios()
+    cargarReacciones()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post.id])
+  }, [post.id, user?.email])
+
+  async function toggleReaccion() {
+    if (!user) return
+    if (reaccione) {
+      await supabase
+        .from('reacciones')
+        .delete()
+        .eq('publicacion_id', post.id)
+        .eq('autor_correo', user.email)
+      setReaccione(false)
+      setReacciones((r) => Math.max(0, r - 1))
+    } else {
+      await supabase.from('reacciones').insert({
+        publicacion_id: post.id,
+        autor_correo: user.email,
+      })
+      setReaccione(true)
+      setReacciones((r) => r + 1)
+    }
+  }
 
   async function comentar(e) {
     e.preventDefault()
@@ -95,6 +131,22 @@ export default function PostDetail({ post, onClose, onCambio }) {
           </p>
         )}
 
+        <div className="reaccion-row" style={{ marginTop: 12 }}>
+          <button
+            className={`btn ${reaccione ? 'btn-reactivo' : 'btn-outline'}`}
+            onClick={toggleReaccion}
+            title={user ? 'Me gusta este trabajo' : 'Inicia sesión para reaccionar'}
+            disabled={!user}
+          >
+            👍 {reacciones}
+          </button>
+          {!user && (
+            <span style={{ fontSize: '0.78rem', color: 'var(--ink-soft)' }}>
+              Inicia sesión para reaccionar.
+            </span>
+          )}
+        </div>
+
         <div className="comments">
           <h3>Comentarios ({comentarios.length})</h3>
           {comentarios.length === 0 && (
@@ -137,9 +189,16 @@ export default function PostDetail({ post, onClose, onCambio }) {
         </div>
 
         {esAdmin(user?.email) && (
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            <button
+              className="btn"
+              style={{ background: 'var(--cyan-light)', color: 'var(--cyan)' }}
+              onClick={() => onEditar(post)}
+            >
+              ✏️ Editar trabajo
+            </button>
             {confirmar ? (
-              <div className="mensaje error">
+              <div className="mensaje error" style={{ margin: 0 }}>
                 ¿Seguro que deseas eliminar este trabajo para siempre?
                 <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
                   <button className="btn btn-primary" style={{ background: '#b91c1c' }} onClick={eliminar} disabled={cargando}>
