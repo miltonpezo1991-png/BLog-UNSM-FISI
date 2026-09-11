@@ -19,14 +19,14 @@ export default function LoginModal({ onClose, initialMode = 'login' }) {
       setCargando(false)
       return
     }
-    const { error } = modo === 'login'
+    const { error, session } = modo === 'login'
       ? await iniciarSesion(correo, contrasena)
       : await crearCuenta(correo, contrasena, nombre)
 
     setCargando(false)
     if (error) {
       setMensaje({ tipo: 'error', texto: error.message })
-    } else if (modo === 'signup') {
+    } else if (modo === 'signup' && !session) {
       setMensaje({
         tipo: 'ok',
         texto: 'Cuenta creada. Revisa tu correo para confirmarla (si el correo ya existe, inicia sesión).',
